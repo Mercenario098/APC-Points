@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">APC Points</string>
+    <string name="buscar">Buscar</string>
+    <string name="locais">Locais</string>
+    <string name="avaliacoes">Avaliações</string>
+    <string name="perfil">Perfil</string>
+    <string name="logo_desc">Logo APC Points</string>
+</resources>

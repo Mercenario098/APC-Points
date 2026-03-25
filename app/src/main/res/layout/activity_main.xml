@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/plano"
+    tools:context=".MainActivity">
+
+    <ImageButton
+        android:id="@+id/btnPerfil"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/perfil"
+        android:scaleType="centerInside"
+        android:src="@drawable/perfil"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/white" />
+
+    <ImageView
+        android:id="@+id/logoperfil"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        android:layout_marginTop="80dp"
+        android:contentDescription="@string/logo_desc"
+        android:src="@drawable/apcpoints"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btnBuscar"
+        style="@style/MenuButton"
+        android:layout_marginTop="32dp"
+        android:text="@string/buscar"
+        app:icon="@drawable/buscar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/logoperfil" />
+
+    <Button
+        android:id="@+id/btnLocais"
+        style="@style/MenuButton"
+        android:layout_marginTop="16dp"
+        android:text="@string/locais"
+        app:icon="@drawable/locais"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnBuscar" />
+
+    <Button
+        android:id="@+id/btnAvaliacoes"
+        style="@style/MenuButton"
+        android:layout_marginTop="16dp"
+        android:text="@string/avaliacoes"
+        app:icon="@drawable/avaliacao"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnLocais" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
