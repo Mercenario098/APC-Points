@@ -42,7 +42,8 @@ class telaAvaliacoes : AppCompatActivity() {
         binding.textNomeLocalDetalhe.text = local.getNome()
         binding.textEnderecoLocalDetalhe.text = local.getEndereco()
         
-        local.getImagemResId()?.let {
+        // Agora usamos getImagemPrincipal() pois mudamos a classe Local para uma lista de imagens
+        local.getImagemPrincipal()?.let {
             binding.imgLocalDetalhe.setImageResource(it)
         }
     }

@@ -5,10 +5,49 @@ object GerenciarDeLocais {
 
     init {
         // Adicionando alguns locais de exemplo para popular o app inicialmente
-        adicionarLocal(Local("Restaurante Central", "Rua das Flores, 123", "Restaurante", 4.5))
-        adicionarLocal(Local("Parque da Cidade", "Av. Principal, s/n", "Lazer", 4.8))
-        adicionarLocal(Local("Museu de Arte", "Praça da Cultura, 10", "Cultura", 4.2))
-        adicionarLocal(Local("Biblioteca Municipal", "Rua da Educação, 45", "Educação", 4.7))
+        adicionarLocal(
+            Local(
+                "Praça Três Poderes",
+                "Avenida Tancredo Neves",
+                "Lazer",
+                4.8,
+                listOf(
+                    R.drawable.praca_3_poderes_2
+                )
+            )
+        )
+        
+        adicionarLocal(
+            Local(
+                "Rio do Povoado São Miguel",
+                "Povoado São Miguel",
+                "Lazer",
+                4.9,
+                listOf(R.drawable.rio_do_povoado_sao_miguel)
+            )
+        )
+
+        adicionarLocal(
+            Local(
+                "Praia do Barão",
+                "Beira Mar",
+                "Lazer",
+                4.5,
+                listOf(R.drawable.praia_do_barao1)
+            )
+        )
+
+        adicionarLocal(
+            Local (
+                "Praia de Baleia",
+                "Beira Mar",
+                "Lazer",
+                4.5,
+                listOf(R.drawable.praia_de_baleia)
+            )
+        )
+
+
     }
 
     fun adicionarLocal(local: Local) {

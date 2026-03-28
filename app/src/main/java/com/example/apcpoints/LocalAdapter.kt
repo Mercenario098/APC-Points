@@ -32,8 +32,12 @@ class LocalAdapter(private val lista: List<Local>) :
         holder.categoria.text = local.getCategoria()
         holder.nota.text = String.format("%.1f", local.getAvaliacaoMedia())
         
-        local.getImagemResId()?.let {
+        // Exibe a primeira imagem da lista (se existir)
+        local.getImagemPrincipal()?.let {
             holder.imagem.setImageResource(it)
+        } ?: run {
+            // Opcional: define uma imagem padrão se não houver imagens
+            // holder.imagem.setImageResource(R.drawable.placeholder)
         }
 
         // Configura o clique no item para abrir a tela de avaliações
