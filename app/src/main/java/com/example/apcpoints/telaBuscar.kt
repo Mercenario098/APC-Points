@@ -1,102 +1,125 @@
 package com.example.apcpoints
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
-import android.view.View
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.apcpoints.databinding.ActivityTelaBuscarBinding
-import com.google.android.material.chip.Chip
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
-class telaBuscar : AppCompatActivity() {
-
-    private lateinit var binding: ActivityTelaBuscarBinding
-    private lateinit var adapter: LocalAdapter
-
+class telaBuscar : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        
-        binding = ActivityTelaBuscarBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-        ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+        setContent {
+            MaterialTheme {
+                BuscarScreen(onBackClick = { finish() })
+            }
         }
-
-        configurarRecyclerView()
-        configurarBusca()
-        configurarFiltros()
     }
+}
 
-    private fun configurarRecyclerView() {
-        binding.recyclerBusca.layoutManager = LinearLayoutManager(this)
-        val listaInicial = GerenciarDeLocais.getTodosLocais()
-        adapter = LocalAdapter(listaInicial)
-        binding.recyclerBusca.adapter = adapter
-    }
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun BuscarScreen(onBackClick: () -> Unit) {
+    var query by remember { mutableStateOf("") }
+    var categoriaSelecionada by remember { mutableStateOf("Todos") }
+    
+    val categorias = listOf("Todos", "Lazer", "Restaurante", "Pizzaria", "Comércio", "Cultura", "Educação")
 
-    private fun configurarBusca() {
-        binding.editBusca.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                // Ao digitar, desmarcamos os filtros de chip para priorizar a busca por texto
-                binding.chipGroupFiltros.clearCheck()
-                binding.chipTodos.isChecked = s.isNullOrEmpty()
-                filtrarLocais(s.toString())
-            }
-            override fun afterTextChanged(s: Editable?) {}
-        })
-    }
-
-    private fun configurarFiltros() {
-        binding.chipGroupFiltros.setOnCheckedStateChangeListener { group, checkedIds ->
-            if (checkedIds.isEmpty()) {
-                filtrarLocais("") // Se nada estiver marcado, mostra tudo
-                return@setOnCheckedStateChangeListener
-            }
-
-            val chipId = checkedIds.first()
-            val chip = findViewById<Chip>(chipId)
-            val categoriaSelecionada = chip.text.toString()
-
-            if (categoriaSelecionada == "Todos") {
-                binding.editBusca.text?.clear()
-                filtrarLocais("")
+    // Lógica de filtragem
+    val locaisFiltrados = remember(query, categoriaSelecionada) {
+        if (categoriaSelecionada == "Todos") {
+            if (query.isEmpty()) {
+                GerenciarDeLocais.getTodosLocais()
             } else {
-                // Quando clica em um filtro, limpa o texto da busca para não confundir
-                binding.editBusca.text?.clear()
-                val listaFiltrada = GerenciarDeLocais.buscarPorCategoria(categoriaSelecionada)
-                atualizarLista(listaFiltrada)
+                val porNome = GerenciarDeLocais.buscarPorNome(query)
+                val porCategoria = GerenciarDeLocais.buscarPorCategoria(query)
+                (porNome + porCategoria).distinct()
             }
+        } else {
+            GerenciarDeLocais.buscarPorCategoria(categoriaSelecionada)
         }
     }
 
-    private fun filtrarLocais(texto: String) {
-        val listaFiltrada = if (texto.isEmpty()) {
-            GerenciarDeLocais.getTodosLocais()
-        } else {
-            val porNome = GerenciarDeLocais.buscarPorNome(texto)
-            val porCategoria = GerenciarDeLocais.buscarPorCategoria(texto)
-            (porNome + porCategoria).distinct()
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Buscar Locais", fontWeight = FontWeight.Bold) },
+                navigationIcon = {
+                    IconButton(onClick = onBackClick) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Voltar")
+                    }
+                }
+            )
         }
-        atualizarLista(listaFiltrada)
-    }
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+        ) {
+            // Barra de Busca
+            OutlinedTextField(
+                value = query,
+                onValueChange = { 
+                    query = it
+                    if (it.isNotEmpty()) categoriaSelecionada = "Todos"
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                placeholder = { Text("O que você procura?") },
+                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                shape = MaterialTheme.shapes.medium,
+                singleLine = true
+            )
 
-    private fun atualizarLista(lista: List<Local>) {
-        adapter = LocalAdapter(lista)
-        binding.recyclerBusca.adapter = adapter
+            // Filtros de Categoria (Chips)
+            LazyRow(
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(categorias) { categoria ->
+                    FilterChip(
+                        selected = categoriaSelecionada == categoria,
+                        onClick = { 
+                            categoriaSelecionada = categoria
+                            if (categoria != "Todos") query = ""
+                        },
+                        label = { Text(categoria) }
+                    )
+                }
+            }
 
-        if (lista.isEmpty()) {
-            binding.textSemResultados.visibility = View.VISIBLE
-        } else {
-            binding.textSemResultados.visibility = View.GONE
+            // Lista de Resultados
+            if (locaisFiltrados.isEmpty()) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text("Nenhum local encontrado.", color = Color.Gray)
+                }
+            } else {
+                LazyColumn(
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    items(locaisFiltrados) { local ->
+                        LocalItem(local) // Reutilizando o componente criado na telaLocais
+                    }
+                }
+            }
         }
     }
 }

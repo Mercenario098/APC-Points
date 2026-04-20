@@ -3,55 +3,143 @@ package com.example.apcpoints
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import com.example.apcpoints.databinding.ActivityTelaPerfilBinding
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
-class telaPerfil : AppCompatActivity() {
-
-    private lateinit var binding: ActivityTelaPerfilBinding
-
+class telaPerfil : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        
-        binding = ActivityTelaPerfilBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-        ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
-
-        // Configuração do botão de Entrar (Login)
-        binding.buttonEntrar.setOnClickListener {
-            val email = binding.textEmailAddress.text.toString()
-            val senha = binding.textPassword.text.toString()
-
-            if (email.isNotEmpty() && senha.isNotEmpty()) {
-                val usuario = GerenciadorDeUsuarios.validarLogin(email, senha)
-                if (usuario != null) {
-                    Toast.makeText(this, "Bem-vindo, ${usuario.getNome()}!", Toast.LENGTH_SHORT).show()
-                    
-                    // Vai para a tela principal (MainActivity) após o login
-                    val intent = Intent(this, MainActivity::class.java)
-                    startActivity(intent)
-                    finish() // Fecha a tela de login/perfil para não voltar nela ao apertar o botão "voltar"
-                } else {
-                    Toast.makeText(this, "E-mail ou senha incorretos", Toast.LENGTH_SHORT).show()
-                }
-            } else {
-                Toast.makeText(this, "Preencha todos os campos", Toast.LENGTH_SHORT).show()
+        setContent {
+            MaterialTheme {
+                PerfilScreen(
+                    onLoginSuccess = {
+                        startActivity(Intent(this, MainActivity::class.java))
+                        finish()
+                    },
+                    onCadastroClick = {
+                        startActivity(Intent(this, telaCadastro::class.java))
+                    },
+                    onBackClick = { finish() }
+                )
             }
         }
+    }
+}
 
-        // Configuração do botão de Cadastre-se
-        binding.buttonCasdastro.setOnClickListener {
-            val intent = Intent(this, telaCadastro::class.java)
-            startActivity(intent)
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun PerfilScreen(
+    onLoginSuccess: () -> Unit,
+    onCadastroClick: () -> Unit,
+    onBackClick: () -> Unit
+) {
+    var email by remember { mutableStateOf("") }
+    var senha by remember { mutableStateOf("") }
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Meu Perfil", fontWeight = FontWeight.Bold) },
+                navigationIcon = {
+                    IconButton(onClick = onBackClick) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Voltar")
+                    }
+                }
+            )
+        }
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.perfil),
+                contentDescription = null,
+                modifier = Modifier.size(100.dp)
+            )
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            Text(
+                text = "Faça seu Login",
+                fontSize = 22.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF1E88E5)
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            OutlinedTextField(
+                value = email,
+                onValueChange = { email = it },
+                label = { Text("E-mail") },
+                modifier = Modifier.fillMaxWidth(),
+                leadingIcon = { Icon(Icons.Default.Email, contentDescription = null) },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                singleLine = true
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            OutlinedTextField(
+                value = senha,
+                onValueChange = { senha = it },
+                label = { Text("Senha") },
+                modifier = Modifier.fillMaxWidth(),
+                leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null) },
+                visualTransformation = PasswordVisualTransformation(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                singleLine = true
+            )
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            Button(
+                onClick = {
+                    if (email.isNotEmpty() && senha.isNotEmpty()) {
+                        val usuario = GerenciadorDeUsuarios.validarLogin(email, senha)
+                        if (usuario != null) {
+                            onLoginSuccess()
+                        }
+                    }
+                },
+                modifier = Modifier.fillMaxWidth().height(50.dp),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Text("ENTRAR")
+            }
+
+            TextButton(
+                onClick = onCadastroClick,
+                modifier = Modifier.padding(top = 8.dp)
+            ) {
+                Text("Não tem uma conta? Cadastre-se", color = Color.Gray)
+            }
         }
     }
 }

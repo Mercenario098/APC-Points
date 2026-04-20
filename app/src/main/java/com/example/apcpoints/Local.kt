@@ -12,7 +12,11 @@ class Local(
     fun getNome(): String = nome
     fun getEndereco(): String = endereco
     fun getCategoria(): String = categoria
-    fun getAvaliacaoMedia(): Double = avaliacaoMedia
+    fun getAvaliacaoMedia(): Double {
+        val avaliacoes = GerenciadorDeAvaliacoes.getAvaliacoesDoLocal(nome)
+        if (avaliacoes.isEmpty()) return 0.0
+        return avaliacoes.map { it.getNota() }.average()
+    }
     fun getImagens(): List<Int> = imagens
     fun getImagemPrincipal(): Int? = imagens.firstOrNull()
 }

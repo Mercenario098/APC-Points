@@ -2,51 +2,129 @@ package com.example.apcpoints
 
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import com.example.apcpoints.databinding.ActivityTelaCadastroBinding
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
-class telaCadastro : AppCompatActivity() {
-
-    private lateinit var binding: ActivityTelaCadastroBinding
-
+class telaCadastro : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
-        binding = ActivityTelaCadastroBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-        ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
-
-        binding.btnCadastrar.setOnClickListener {
-            cadastrar()
+        setContent {
+            MaterialTheme {
+                CadastroScreen(
+                    onCadastroSuccess = { finish() },
+                    onBackClick = { finish() }
+                )
+            }
         }
     }
+}
 
-    private fun cadastrar() {
-        val nome = binding.editNome.text.toString()
-        val email = binding.editEmail.text.toString()
-        val senha = binding.editSenha.text.toString()
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CadastroScreen(onCadastroSuccess: () -> Unit, onBackClick: () -> Unit) {
+    var nome by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
+    var senha by remember { mutableStateOf("") }
 
-        if (nome.isNotEmpty() && email.isNotEmpty() && senha.isNotEmpty()) {
-            val novoUsuario = Usuario(nome, email, senha)
-            val sucesso = GerenciadorDeUsuarios.cadastrarUsuario(novoUsuario)
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Criar Conta", fontWeight = FontWeight.Bold) },
+                navigationIcon = {
+                    IconButton(onClick = onBackClick) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Voltar")
+                    }
+                }
+            )
+        }
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
+        ) {
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            Text(
+                text = "Cadastre-se para começar!",
+                fontSize = 18.sp,
+                color = Color.Gray,
+                modifier = Modifier.align(Alignment.Start)
+            )
 
-            if (sucesso) {
-                Toast.makeText(this, "Usuário cadastrado com sucesso!", Toast.LENGTH_SHORT).show()
-                finish() // Volta para a tela anterior
-            } else {
-                Toast.makeText(this, "Erro: E-mail já cadastrado.", Toast.LENGTH_SHORT).show()
+            Spacer(modifier = Modifier.height(32.dp))
+
+            OutlinedTextField(
+                value = nome,
+                onValueChange = { nome = it },
+                label = { Text("Nome Completo") },
+                modifier = Modifier.fillMaxWidth(),
+                leadingIcon = { Icon(Icons.Default.Person, contentDescription = null) },
+                singleLine = true
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            OutlinedTextField(
+                value = email,
+                onValueChange = { email = it },
+                label = { Text("E-mail") },
+                modifier = Modifier.fillMaxWidth(),
+                leadingIcon = { Icon(Icons.Default.Email, contentDescription = null) },
+                singleLine = true
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            OutlinedTextField(
+                value = senha,
+                onValueChange = { senha = it },
+                label = { Text("Senha") },
+                modifier = Modifier.fillMaxWidth(),
+                leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null) },
+                visualTransformation = PasswordVisualTransformation(),
+                singleLine = true
+            )
+
+            Spacer(modifier = Modifier.height(40.dp))
+
+            Button(
+                onClick = {
+                    if (nome.isNotEmpty() && email.isNotEmpty() && senha.isNotEmpty()) {
+                        val novo = Usuario(nome, email, senha)
+                        val sucesso = GerenciadorDeUsuarios.cadastrarUsuario(novo)
+                        if (sucesso) {
+                            onCadastroSuccess()
+                        }
+                    }
+                },
+                modifier = Modifier.fillMaxWidth().height(54.dp),
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1E88E5))
+            ) {
+                Text("CADASTRAR", fontSize = 16.sp, fontWeight = FontWeight.Bold)
             }
-        } else {
-            Toast.makeText(this, "Preencha todos os campos!", Toast.LENGTH_SHORT).show()
         }
     }
 }

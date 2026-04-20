@@ -5,18 +5,44 @@
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
 
-    <style name="Theme.APCPoints" parent="Base.Theme.APCPoints" />
+    <style name="Theme.APCPoints" parent="Base.Theme.APCPoints">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/accent</item>
+        <item name="android:statusBarColor">@color/primary_dark</item>
+    </style>
 
-    <style name="MenuButton" parent="Widget.MaterialComponents.Button.Icon">
-        <item name="android:layout_width">0dp</item>
+    <style name="AppTextInputLayout" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginStart">64dp</item>
-        <item name="android:layout_marginEnd">64dp</item>
+        <item name="android:layout_marginTop">12dp</item>
+        <item name="boxCornerRadiusTopStart">12dp</item>
+        <item name="boxCornerRadiusTopEnd">12dp</item>
+        <item name="boxCornerRadiusBottomStart">12dp</item>
+        <item name="boxCornerRadiusBottomEnd">12dp</item>
+        <item name="boxStrokeColor">@color/primary</item>
+        <item name="hintTextColor">@color/primary</item>
+    </style>
+
+    <style name="PrimaryButton" parent="Widget.Material3.Button">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">56dp</item>
+        <item name="android:textSize">16sp</item>
+        <item name="cornerRadius">12dp</item>
+    </style>
+
+    <style name="MenuButton" parent="Widget.Material3.Button.TonalButton">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">64dp</item>
+        <item name="android:layout_marginStart">32dp</item>
+        <item name="android:layout_marginEnd">32dp</item>
         <item name="android:backgroundTint">@color/blue_semi_transparent</item>
-        <item name="android:fontFamily">@font/poppins_medium</item>
         <item name="android:textColor">@color/white</item>
-        <item name="iconPadding">10dp</item>
-        <item name="iconSize">40dp</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:letterSpacing">0.05</item>
+        <item name="cornerRadius">16dp</item>
+        <item name="iconPadding">12dp</item>
+        <item name="iconSize">24dp</item>
         <item name="iconTint">@color/white</item>
     </style>
 </resources>

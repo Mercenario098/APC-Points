@@ -11,6 +11,13 @@ object GerenciadorDeAvaliacoes {
         adicionarAvaliacao(Avaliacao("Museu de Arte", "ana@email.com", 5f, "Exposição incrível!"))
     }*/
 
+    init {
+        // 3 Avaliações de exemplo para testar o cálculo da média
+        adicionarAvaliacao(Avaliacao("Pizzaria Bella Italia", "claudia@email.com", 5f, "A melhor pizza da cidade!"))
+        adicionarAvaliacao(Avaliacao("Restaurante Central", "marcos@email.com", 4f, "Ótimo atendimento."))
+        adicionarAvaliacao(Avaliacao("Supermercado Econômico", "jose@email.com", 3f, "Preços bons, mas filas longas."))
+    }
+
     fun adicionarAvaliacao(avaliacao: Avaliacao) {
         todasAvaliacoes.add(avaliacao)
     }
