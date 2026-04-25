@@ -1,10 +1,12 @@
 package com.example.apcpoints
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -18,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -32,7 +35,12 @@ class telaLocais : ComponentActivity() {
             MaterialTheme {
                 LocaisScreen(
                     locais = GerenciarDeLocais.getTodosLocais(),
-                    onBackClick = { finish() }
+                    onBackClick = { finish() },
+                    onLocalClick = { local ->
+                        val intent = Intent(this, telaAvaliacoes::class.java)
+                        intent.putExtra("LOCAL_ESCOLHIDO", local)
+                        startActivity(intent)
+                    }
                 )
             }
         }
@@ -41,14 +49,18 @@ class telaLocais : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LocaisScreen(locais: List<Local>, onBackClick: () -> Unit) {
+fun LocaisScreen(
+    locais: List<Local>,
+    onBackClick: () -> Unit,
+    onLocalClick: (Local) -> Unit
+) {
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("Locais", fontWeight = FontWeight.Bold) },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color.White,
-                    titleContentColor = Color(0xFF1E88E5)
+                    titleContentColor = Color(0xCC1E88E5)
                 )
             )
         }
@@ -61,16 +73,18 @@ fun LocaisScreen(locais: List<Local>, onBackClick: () -> Unit) {
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             items(locais) { local ->
-                LocalItem(local)
+                LocalItem(local, onClick = { onLocalClick(local) })
             }
         }
     }
 }
 
 @Composable
-fun LocalItem(local: Local) {
+fun LocalItem(local: Local, onClick: () -> Unit) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() },
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)

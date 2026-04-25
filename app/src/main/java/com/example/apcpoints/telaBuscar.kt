@@ -1,5 +1,6 @@
 package com.example.apcpoints
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -26,7 +27,14 @@ class telaBuscar : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             MaterialTheme {
-                BuscarScreen(onBackClick = { finish() })
+                BuscarScreen(
+                    onBackClick = { finish() },
+                    onLocalClick = { local ->
+                        val intent = Intent(this, telaAvaliacoes::class.java)
+                        intent.putExtra("LOCAL_ESCOLHIDO", local)
+                        startActivity(intent)
+                    }
+                )
             }
         }
     }
@@ -34,13 +42,12 @@ class telaBuscar : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BuscarScreen(onBackClick: () -> Unit) {
+fun BuscarScreen(onBackClick: () -> Unit, onLocalClick: (Local) -> Unit) {
     var query by remember { mutableStateOf("") }
     var categoriaSelecionada by remember { mutableStateOf("Todos") }
     
     val categorias = listOf("Todos", "Lazer", "Restaurante", "Pizzaria", "Comércio", "Cultura", "Educação")
 
-    // Lógica de filtragem
     val locaisFiltrados = remember(query, categoriaSelecionada) {
         if (categoriaSelecionada == "Todos") {
             if (query.isEmpty()) {
@@ -72,7 +79,6 @@ fun BuscarScreen(onBackClick: () -> Unit) {
                 .fillMaxSize()
                 .padding(padding)
         ) {
-            // Barra de Busca
             OutlinedTextField(
                 value = query,
                 onValueChange = { 
@@ -88,7 +94,6 @@ fun BuscarScreen(onBackClick: () -> Unit) {
                 singleLine = true
             )
 
-            // Filtros de Categoria (Chips)
             LazyRow(
                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -105,7 +110,6 @@ fun BuscarScreen(onBackClick: () -> Unit) {
                 }
             }
 
-            // Lista de Resultados
             if (locaisFiltrados.isEmpty()) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Text("Nenhum local encontrado.", color = Color.Gray)
@@ -116,7 +120,7 @@ fun BuscarScreen(onBackClick: () -> Unit) {
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     items(locaisFiltrados) { local ->
-                        LocalItem(local) // Reutilizando o componente criado na telaLocais
+                        LocalItem(local, onClick = { onLocalClick(local) })
                     }
                 }
             }

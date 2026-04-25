@@ -1,7 +1,6 @@
 package com.example.apcpoints
 
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -121,7 +120,7 @@ fun CadastroScreen(onCadastroSuccess: () -> Unit, onBackClick: () -> Unit) {
                 },
                 modifier = Modifier.fillMaxWidth().height(54.dp),
                 shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1E88E5))
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xCC1E88E5))
             ) {
                 Text("CADASTRAR", fontSize = 16.sp, fontWeight = FontWeight.Bold)
             }

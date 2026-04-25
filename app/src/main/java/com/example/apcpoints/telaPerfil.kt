@@ -2,7 +2,6 @@ package com.example.apcpoints
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -129,7 +128,8 @@ fun PerfilScreen(
                     }
                 },
                 modifier = Modifier.fillMaxWidth().height(50.dp),
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(12.dp),
+
             ) {
                 Text("ENTRAR")
             }
@@ -138,7 +138,7 @@ fun PerfilScreen(
                 onClick = onCadastroClick,
                 modifier = Modifier.padding(top = 8.dp)
             ) {
-                Text("Não tem uma conta? Cadastre-se", color = Color.Gray)
+                Text("Não tem uma conta? Cadastre-se", color = Color(0xCC1E88E5))
             }
         }
     }
